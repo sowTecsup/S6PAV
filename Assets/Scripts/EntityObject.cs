@@ -7,5 +7,6 @@ public class EntityObject : Entity, IInteractable
     {
         print(observer.name + "A interactuado conmigo");
         print(ShowMessage);
+        // asdasdasdsadasd
     }
 }
