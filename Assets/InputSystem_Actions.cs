@@ -1077,6 +1077,98 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Backpack"",
+            ""id"": ""e7c4abe7-b70c-4dfc-b020-d7e8e5604228"",
+            ""actions"": [
+                {
+                    ""name"": ""MoveItem"",
+                    ""type"": ""Value"",
+                    ""id"": ""bc356eaa-6450-4060-a352-8280017359c2"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""DeleteItem"",
+                    ""type"": ""Button"",
+                    ""id"": ""55169db2-9894-448b-ac22-698243a0394f"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""d50d87ea-c362-4210-ac83-be6b6e483e90"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveItem"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""815672b5-22ca-48cc-8ff8-7c494f8b64c9"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveItem"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""f2673865-9078-4c25-b577-141a7d1d5bd8"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveItem"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""e98fba41-8dad-49a2-b68b-709aaea925ea"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveItem"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""349017f1-57a9-48e9-bbf0-7c36ab896a07"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""MoveItem"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""48a1361b-2ac0-450f-a511-dfe99dc51c0d"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DeleteItem"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -1165,12 +1257,17 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_UI_ScrollWheel = m_UI.FindAction("ScrollWheel", throwIfNotFound: true);
         m_UI_TrackedDevicePosition = m_UI.FindAction("TrackedDevicePosition", throwIfNotFound: true);
         m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
+        // Backpack
+        m_Backpack = asset.FindActionMap("Backpack", throwIfNotFound: true);
+        m_Backpack_MoveItem = m_Backpack.FindAction("MoveItem", throwIfNotFound: true);
+        m_Backpack_DeleteItem = m_Backpack.FindAction("DeleteItem", throwIfNotFound: true);
     }
 
     ~@InputSystem_Actions()
     {
         UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, InputSystem_Actions.Player.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI.enabled, "This will cause a leak and performance issues, InputSystem_Actions.UI.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Backpack.enabled, "This will cause a leak and performance issues, InputSystem_Actions.Backpack.Disable() has not been called.");
     }
 
     /// <summary>
@@ -1621,6 +1718,113 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="UIActions" /> instance referencing this action map.
     /// </summary>
     public UIActions @UI => new UIActions(this);
+
+    // Backpack
+    private readonly InputActionMap m_Backpack;
+    private List<IBackpackActions> m_BackpackActionsCallbackInterfaces = new List<IBackpackActions>();
+    private readonly InputAction m_Backpack_MoveItem;
+    private readonly InputAction m_Backpack_DeleteItem;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "Backpack".
+    /// </summary>
+    public struct BackpackActions
+    {
+        private @InputSystem_Actions m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public BackpackActions(@InputSystem_Actions wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "Backpack/MoveItem".
+        /// </summary>
+        public InputAction @MoveItem => m_Wrapper.m_Backpack_MoveItem;
+        /// <summary>
+        /// Provides access to the underlying input action "Backpack/DeleteItem".
+        /// </summary>
+        public InputAction @DeleteItem => m_Wrapper.m_Backpack_DeleteItem;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_Backpack; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="BackpackActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(BackpackActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="BackpackActions" />
+        public void AddCallbacks(IBackpackActions instance)
+        {
+            if (instance == null || m_Wrapper.m_BackpackActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_BackpackActionsCallbackInterfaces.Add(instance);
+            @MoveItem.started += instance.OnMoveItem;
+            @MoveItem.performed += instance.OnMoveItem;
+            @MoveItem.canceled += instance.OnMoveItem;
+            @DeleteItem.started += instance.OnDeleteItem;
+            @DeleteItem.performed += instance.OnDeleteItem;
+            @DeleteItem.canceled += instance.OnDeleteItem;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="BackpackActions" />
+        private void UnregisterCallbacks(IBackpackActions instance)
+        {
+            @MoveItem.started -= instance.OnMoveItem;
+            @MoveItem.performed -= instance.OnMoveItem;
+            @MoveItem.canceled -= instance.OnMoveItem;
+            @DeleteItem.started -= instance.OnDeleteItem;
+            @DeleteItem.performed -= instance.OnDeleteItem;
+            @DeleteItem.canceled -= instance.OnDeleteItem;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="BackpackActions.UnregisterCallbacks(IBackpackActions)" />.
+        /// </summary>
+        /// <seealso cref="BackpackActions.UnregisterCallbacks(IBackpackActions)" />
+        public void RemoveCallbacks(IBackpackActions instance)
+        {
+            if (m_Wrapper.m_BackpackActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="BackpackActions.AddCallbacks(IBackpackActions)" />
+        /// <seealso cref="BackpackActions.RemoveCallbacks(IBackpackActions)" />
+        /// <seealso cref="BackpackActions.UnregisterCallbacks(IBackpackActions)" />
+        public void SetCallbacks(IBackpackActions instance)
+        {
+            foreach (var item in m_Wrapper.m_BackpackActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_BackpackActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="BackpackActions" /> instance referencing this action map.
+    /// </summary>
+    public BackpackActions @Backpack => new BackpackActions(this);
     private int m_KeyboardMouseSchemeIndex = -1;
     /// <summary>
     /// Provides access to the input control scheme.
@@ -1834,5 +2038,27 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Backpack" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="BackpackActions.AddCallbacks(IBackpackActions)" />
+    /// <seealso cref="BackpackActions.RemoveCallbacks(IBackpackActions)" />
+    public interface IBackpackActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "MoveItem" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMoveItem(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "DeleteItem" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDeleteItem(InputAction.CallbackContext context);
     }
 }

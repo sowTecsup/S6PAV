@@ -2,16 +2,21 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Player : Entity
+public class Player : Entity , IDamageable
 {
     public InputSystem_Actions inputs;
-
     public GameObject InteractText;
-
-
     public IInteractable interactableObject;
+    public Rigidbody2D rb;
+
+
     public Vector2 moveInput;
+    public Vector2 lookInput;
+
     public float moveSpeed;
+    public float PlayerHp;
+    public float KnockbackForce;
+
     private void Awake()
     {
         inputs = new InputSystem_Actions();
@@ -25,6 +30,14 @@ public class Player : Entity
         inputs.Player.Interact.performed += OnInteract;
         inputs.Player.Interact.started += OnInteract;
 
+        inputs.Player.Look.started += Onlook;
+        inputs.Player.Look.performed += Onlook;
+        inputs.Player.Look.canceled += Onlook;
+    }
+
+    private void Onlook(InputAction.CallbackContext context)
+    {
+        lookInput = context.ReadValue<Vector2>();
     }
 
     private void OnInteract(InputAction.CallbackContext context)
@@ -72,5 +85,16 @@ public class Player : Entity
     {
         InteractText.SetActive(false);
         interactableObject = null;
+    }
+
+    public void TakeDamage(int damage, Vector3 origin)//->aparte de recibir da;o debo saber desde que direccion me han goleado
+    {
+        PlayerHp = Math.Max(0, PlayerHp - damage);
+
+        Vector2 knockBackDir = (transform.position - origin).normalized;
+
+        rb.AddForce(knockBackDir * KnockbackForce, ForceMode2D.Impulse);
+
+        print("he recibido da;o");
     }
 }
